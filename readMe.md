@@ -12,19 +12,19 @@
    git clone https://github.com/DenEvtifeev/wb-api-project
    cd <repository_folder>
    
-   2. .evn файл.
-       ```
-       для корректной работы проекта скопируйте данные из .env.example в ваш .env файл.
-       далее добавьте строки:
-              WB_API_BASE_URL="http://89.108.115.241:6969/api"
-              API_KEY="E6kUTYrYwZq2tN4QEtyzsbEBk3ie"
-       в полях, отвечающих за соединение с базой данных вставить следующие строки:
-                DB_CONNECTION=mysql
-                DB_HOST=174.138.91.93
-                DB_PORT=3306
-                DB_DATABASE=gncawbpnnu
-                DB_USERNAME=gncawbpnnu
-                DB_PASSWORD=dP2SHymPxT
+2. .evn файл.
+    ```
+    для корректной работы проекта скопируйте данные из .env.example в ваш .env файл.
+    далее добавьте строки:
+    WB_API_BASE_URL="http://89.108.115.241:6969/api"
+    API_KEY="E6kUTYrYwZq2tN4QEtyzsbEBk3ie"
+    в полях, отвечающих за соединение с базой данных вставить следующие строки:
+    DB_CONNECTION=mysql
+    DB_HOST=174.138.91.93
+    DB_PORT=3306
+    DB_DATABASE=gncawbpnnu
+    DB_USERNAME=gncawbpnnu
+    DB_PASSWORD=dP2SHymPxT
 ## Комментарии по проекту.
 для выполнения запроса перейдите по адресу /fetchData, после чего запрос будет выполнен
 в проекте был использован подход с созданием отдельного сервиса, в котором реализована логика и построение API запросов.
