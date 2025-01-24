@@ -19,13 +19,15 @@ class ApiService
         $response = Http::get("{$this->baseUrl}/{$endpoint}", $params);
 
         if ($response->successful()) {
+            echo "запрос к $endpoint выполнен успешно <br />";
             return $response->json();
         }
 
         throw new \Exception('Error fetching data from API: ' . $response->status());
     }
 
-    public function fetchStocks(string $dateFrom, string $dateTo, int $page = 1, int $limit = 10){
+    public function fetchStocks(string $dateFrom, string $dateTo, int|array $page = 1, int $limit = 500)
+    {
         $data = $this->fetchEndpointData('stocks', [
             'dateFrom' => $dateFrom,
             'dateTo' => $dateTo,
@@ -33,11 +35,11 @@ class ApiService
             'key' => env("API_KEY"),
             'limit' => $limit
         ]);
-
         $this->saveToDatabase('stocks', $data['data']);
         return $data;
     }
-    public function fetchIncomes(string $dateFrom, string $dateTo, int $page = 1, int $limit = 10){
+    public function fetchIncomes(string $dateFrom, string $dateTo, int $page = 1, int $limit = 500)
+    {
         $data = $this->fetchEndpointData('incomes', [
             'dateFrom' => $dateFrom,
             'dateTo' => $dateTo,
@@ -47,7 +49,8 @@ class ApiService
         ]);
         $this->saveToDatabase('incomes', $data['data']);
     }
-    public function fetchSales(string $dateFrom, string $dateTo, int $page = 1, int $limit = 10){
+    public function fetchSales(string $dateFrom, string $dateTo, int $page = 1, int $limit = 500)
+    {
         $data = $this->fetchEndpointData('sales', [
             'dateFrom' => $dateFrom,
             'dateTo' => $dateTo,
@@ -57,7 +60,8 @@ class ApiService
         ]);
         $this->saveToDatabase('sales', $data['data']);
     }
-    public function fetchOrders(string $dateFrom, string $dateTo, int $page = 1, int $limit = 500){
+    public function fetchOrders(string $dateFrom, string $dateTo, int $page = 1, int $limit = 500)
+    {
         $data = $this->fetchEndpointData('orders', [
             'dateFrom' => $dateFrom,
             'dateTo' => $dateTo,
