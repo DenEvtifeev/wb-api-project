@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Interfaces\HasRulesInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
-class Stock extends Model
+class Stock extends Model implements HasRulesInterface
 {
     use HasFactory;
 
@@ -29,5 +32,35 @@ class Stock extends Model
         'sc_code',
         'price',
         'discount',
+        'updated_at',
+        'created_at',
     ];
+
+    private array $rules =
+        [
+            'date' => 'required|date',
+            'last_change_date' => 'nullable|date',
+            'supplier_article' => 'nullable|string|max:255',
+            'tech_size' => 'nullable|string|max:255',
+            'barcode' => 'nullable|string|max:255',
+            'quantity' => 'required|integer|min:0',
+            'is_supply' => 'nullable|boolean',
+            'is_realization' => 'nullable|boolean',
+            'quantity_full' => 'nullable|integer|min:0',
+            'warehouse_name' => 'nullable|string|max:255',
+            'in_way_to_client' => 'nullable|integer|min:0',
+            'in_way_from_client' => 'nullable|integer|min:0',
+            'nm_id' => 'nullable|integer',
+            'subject' => 'nullable|string|max:255',
+            'category' => 'nullable|string|max:255',
+            'brand' => 'nullable|string|max:255',
+            'sc_code' => 'nullable|string|max:255',
+            'price' => 'nullable|numeric|min:0',
+            'discount' => 'nullable|numeric|min:0|max:100',
+        ];
+
+    public function getRules(): array
+    {
+        return $this->rules;
+    }
 }

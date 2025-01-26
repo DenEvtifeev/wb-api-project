@@ -1,19 +1,13 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Controller;
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
+use App\Http\Controllers\IncomeController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\SaleController;
+use App\Http\Controllers\StockController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
-Route::get('/fetchData', [Controller::class, 'fetchData']);
+Route::get('/', function () {});
+Route::get('/incomes/{dateFrom}/{dateTo}', [IncomeController::class, 'fetchIncomes']);
+Route::get('/orders/{dateFrom}/{dateTo}', [OrderController::class, 'fetchOrders']);
+Route::get('/sales/{dateFrom}/{dateTo}', [SaleController::class, 'fetchSales']);
+Route::get('/stocks/{dateFrom}/{dateTo}', [StockController::class, 'fetchStocks']);
