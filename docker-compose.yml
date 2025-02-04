@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+    app:
+        build:
+            context: Dockerfiles
+            dockerfile: php.Dockerfile
+        container_name: wb-api-app
+        working_dir: /var/www/html
+        volumes:
+            - .:/var/www/html
+            - ./Dockerfiles/app_apache.conf:/etc/apache2/sites-available/000-default.conf:ro
+        ports:
+            - "8000:80"
+        depends_on:
+            - db
+
+    db:
+        image: mysql:8.0
+        container_name: wb-api-db
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: wb_api_db
+            MYSQL_USER: wb_user
+            MYSQL_PASSWORD: wb_password
+        ports:
+            - "3316:3306"
+        volumes:
+            - db_data:/var/lib/mysql
+
+volumes:
+    db_data:
