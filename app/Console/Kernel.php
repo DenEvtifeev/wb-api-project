@@ -12,7 +12,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        // Запускаем дважды в день
+        $schedule->command('api:fetch-data')->twiceDaily(9, 21);
     }
 
     /**

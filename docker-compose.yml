@@ -10,10 +10,13 @@ services:
         volumes:
             - .:/var/www/html
             - ./Dockerfiles/app_apache.conf:/etc/apache2/sites-available/000-default.conf:ro
+            - ./Dockerfiles/app_cron:/etc/cron.d/app_cron:ro
+            - ./logs:/var/log
         ports:
             - "8000:80"
         depends_on:
             - db
+
 
     db:
         image: mysql:8.0
