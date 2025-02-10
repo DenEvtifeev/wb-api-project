@@ -54,7 +54,7 @@ class ApiService
 //        $authStrategyName = 'App\Strategies\\'.$this->tokenType.'AuthStrategy';
 //        $authStrategy = new $authStrategyName();
 
-        if(!$authStrategy){
+        if (!$authStrategy) {
             throw new \Exception("Failed to fetch data");
         }
         $httpRequest = $authStrategy->getHttpWithAuth($this->token);

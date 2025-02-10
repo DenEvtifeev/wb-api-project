@@ -27,18 +27,18 @@ class Income extends Model implements HasRulesInterface
     ];
 
     private array $rules = [
-        'income_id'         => 'required|integer',
-        'number'            => 'nullable|string|max:255',
-        'date'              => 'required|date',
-        'last_change_date'  => 'required|date',
-        'supplier_article'  => 'nullable|string|max:255',
-        'tech_size'         => 'nullable|string|max:255',
-        'barcode'           => 'nullable|integer',
-        'quantity'          => 'required|integer|min:0',
-        'total_price'       => 'required|numeric|min:0',
-        'date_close'        => 'nullable|date',
-        'warehouse_name'    => 'nullable|string|max:255',
-        'nm_id'             => 'nullable|integer',
+        'income_id' => 'required|integer',
+        'number' => 'nullable|string|max:255',
+        'date' => 'required|date',
+        'last_change_date' => 'required|date',
+        'supplier_article' => 'nullable|string|max:255',
+        'tech_size' => 'nullable|string|max:255',
+        'barcode' => 'nullable|integer',
+        'quantity' => 'required|integer|min:0',
+        'total_price' => 'required|numeric|min:0',
+        'date_close' => 'nullable|date',
+        'warehouse_name' => 'nullable|string|max:255',
+        'nm_id' => 'nullable|integer',
     ];
 
     public function getRules(): array

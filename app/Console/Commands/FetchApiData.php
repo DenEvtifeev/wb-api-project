@@ -44,7 +44,7 @@ class FetchApiData extends Command
      */
     public function handle(): void
     {
-        $accountId = (int) $this->argument('account_id');
+        $accountId = (int)$this->argument('account_id');
 
         // Создаём экземпляр `ApiService` вручную, передавая `account_id`
         $apiService = app()->make(ApiService::class, ['accountId' => $accountId]);
