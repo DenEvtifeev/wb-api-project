@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('incomes', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('account_id')->constrained('accounts')->onDelete('cascade');
             $table->bigInteger('income_id');
             $table->string('number')->nullable();
             $table->date('date');

@@ -12,6 +12,7 @@ class Order extends Model implements HasRulesInterface
 
     protected $fillable = [
         'g_number',
+        'account_id',
         'date',
         'last_change_date',
         'supplier_article',
@@ -29,34 +30,36 @@ class Order extends Model implements HasRulesInterface
         'brand',
         'is_cancel',
         'cancel_dt',
-        'updated_at',
-        'created_at',
     ];
-    private array $rules =
-        [
-            'g_number'          => 'required|string|max:50', // Уникальный номер заказа
-            'date'              => 'required|date',         // Дата заказа
-            'last_change_date'  => 'required|date',         // Дата последнего изменения
-            'supplier_article'  => 'nullable|string|max:255', // Артикул поставщика
-            'tech_size'         => 'nullable|string|max:255', // Технический размер
-            'barcode'           => 'nullable|integer',        // Штрих-код
-            'total_price'       => 'nullable|numeric',        // Общая цена
-            'discount_percent'  => 'nullable|integer|min:0|max:100', // Процент скидки
-            'warehouse_name'    => 'nullable|string|max:255', // Название склада
-            'oblast'            => 'nullable|string|max:255', // Область
-            'income_id'         => 'nullable|integer',        // ID прихода
-            'odid'              => 'nullable|string|max:255', // ID заказа
-            'nm_id'             => 'required|integer',        // Номер модели
-            'subject'           => 'nullable|string|max:255', // Субъект (тип товара)
-            'category'          => 'nullable|string|max:255', // Категория
-            'brand'             => 'nullable|string|max:255', // Бренд
-            'is_cancel'         => 'nullable|boolean',        // Отменён ли заказ
-            'cancel_dt'         => 'nullable|date',           // Дата отмены
-        ];
+
+    private array $rules = [
+        'g_number'         => 'required|string|max:50',
+        'date'             => 'required|date',
+        'last_change_date' => 'required|date',
+        'supplier_article' => 'nullable|string|max:255',
+        'tech_size'        => 'nullable|string|max:255',
+        'barcode'          => 'nullable|integer',
+        'total_price'      => 'required|numeric|min:0',
+        'discount_percent' => 'nullable|integer|min:0|max:100',
+        'warehouse_name'   => 'nullable|string|max:255',
+        'oblast'           => 'nullable|string|max:255',
+        'income_id'        => 'nullable|integer',
+        'odid'             => 'nullable|string|max:255',
+        'nm_id'            => 'required|integer',
+        'subject'          => 'nullable|string|max:255',
+        'category'         => 'nullable|string|max:255',
+        'brand'            => 'nullable|string|max:255',
+        'is_cancel'        => 'nullable|boolean',
+        'cancel_dt'        => 'nullable|date',
+    ];
+
     public function getRules(): array
     {
         return $this->rules;
     }
 
-
+    public function account()
+    {
+        return $this->belongsTo(Account::class);
+    }
 }

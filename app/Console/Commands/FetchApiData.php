@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Services\ApiService;
 use Carbon\Carbon;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Storage;
 
 class FetchApiData extends Command
@@ -14,7 +15,7 @@ class FetchApiData extends Command
      *
      * @var string
      */
-    protected $signature = 'api:fetch-data';
+    protected $signature = 'api:fetch-data {account_id}';
 
     /**
      * Описание команды.
@@ -24,7 +25,7 @@ class FetchApiData extends Command
     protected $description = 'Fetch data from API.';
 
     /**
-     * Экземпляр ApiService.
+     * Экземпляр ApiServiceModel.
      *
      * @var ApiService
      */
@@ -38,19 +39,16 @@ class FetchApiData extends Command
     private string $stateFile = 'fetch_data_state.json';
 
     /**
-     * Создаем команду и внедряем ApiService.
-     */
-    public function __construct(ApiService $apiService)
-    {
-        parent::__construct();
-        $this->apiService = $apiService;
-    }
-
-    /**
      * Выполняем логику команды.
+     * @throws BindingResolutionException
      */
     public function handle(): void
     {
+        $accountId = (int) $this->argument('account_id');
+
+        // Создаём экземпляр `ApiService` вручную, передавая `account_id`
+        $apiService = app()->make(ApiService::class, ['accountId' => $accountId]);
+
         // Проверяем, был ли выполнен первый запуск
         $firstRun = !$this->isFirstRunCompleted();
 
@@ -70,16 +68,16 @@ class FetchApiData extends Command
         // Выполняем фетчинг данных
         try {
             $this->info('Fetching Incomes...');
-            $this->apiService->fetchIncomes($dateFrom, $dateTo);
+            $apiService->fetchIncomes($dateFrom, $dateTo);
 
             $this->info('Fetching Orders...');
-            $this->apiService->fetchOrders($dateFrom, $dateTo);
+            $apiService->fetchOrders($dateFrom, $dateTo);
 
             $this->info('Fetching Sales...');
-            $this->apiService->fetchSales($dateFrom, $dateTo);
+            $apiService->fetchSales($dateFrom, $dateTo);
 
             $this->info('Fetching Stocks...');
-            $this->apiService->fetchStocks($dateFrom, $dateTo);
+            $apiService->fetchStocks($dateFrom, $dateTo);
 
             $this->info('API data fetch completed successfully.');
 

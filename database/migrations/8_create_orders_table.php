@@ -11,27 +11,27 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('stocks', function (Blueprint $table) {
+        Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->date('date');
+            $table->foreignId('account_id')->constrained('accounts')->onDelete('cascade');
+            $table->string('g_number');
+            $table->timestamp('date');
             $table->date('last_change_date');
             $table->string('supplier_article');
             $table->string('tech_size');
             $table->bigInteger('barcode');
-            $table->integer('quantity');
-            $table->boolean('is_supply');
-            $table->boolean('is_realization');
-            $table->integer('quantity_full');
+            $table->decimal('total_price', 10, 2);
+            $table->integer('discount_percent');
             $table->string('warehouse_name');
-            $table->integer('in_way_to_client');
-            $table->integer('in_way_from_client');
+            $table->string('oblast');
+            $table->bigInteger('income_id');
+            $table->bigInteger('odid');
             $table->bigInteger('nm_id');
             $table->string('subject');
             $table->string('category');
             $table->string('brand');
-            $table->bigInteger('sc_code');
-            $table->decimal('price');
-            $table->integer('discount');
+            $table->boolean('is_cancel');
+            $table->timestamp('cancel_dt')->nullable();
             $table->timestamps();
         });
     }
@@ -41,6 +41,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('stocks');
+        Schema::dropIfExists('orders');
     }
 };
