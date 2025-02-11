@@ -2,21 +2,26 @@ FROM php:8.1-apache
 
 WORKDIR /var/www/html
 
-RUN docker-php-ext-install pdo pdo_mysql
+# Обновляем пакеты и устанавливаем необходимые зависимости:
+# libzip-dev и unzip – для работы с архивами,
+# git – для скачивания исходников,
+# cron – для задач по расписанию.
+RUN apt-get update && apt-get install -y \
+    libzip-dev \
+    unzip \
+    git \
+    cron
 
+# Устанавливаем PHP-расширения: pdo, pdo_mysql и zip
+RUN docker-php-ext-install pdo pdo_mysql zip
+
+# Копируем Composer из официального образа и устанавливаем его
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-RUN apt-get update && apt-get install -y cron
-
-# Копируем cron файл (укажите путь, если планируете добавить задачи cron в Docker)
+# Копируем файл cron и устанавливаем необходимые права
 COPY ./app_cron /etc/cron.d/app_cron
-
-# Делаем cron файл исполняемым
 RUN chmod 0644 /etc/cron.d/app_cron
-
-# Добавляем cron в список запускаемых служб
 RUN crontab /etc/cron.d/app_cron
 
-# Убедитесь, что Apache и Cron запускаются вместе
-CMD ["sh", "-c", "composer install && service cron start && apache2-foreground"]
-
+# При запуске контейнера автоматически устанавливаем зависимости, запускаем cron и Apache
+CMD ["sh", "-c", "composer install --no-interaction --prefer-dist && service cron start && apache2-foreground"]
