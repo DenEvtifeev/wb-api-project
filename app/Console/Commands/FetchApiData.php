@@ -15,7 +15,7 @@ class FetchApiData extends Command
      *
      * @var string
      */
-    protected $signature = 'api:fetch-data {account_id}';
+    protected $signature = 'api:fetch-data {account_id?}';
 
     /**
      * Описание команды.
@@ -44,7 +44,20 @@ class FetchApiData extends Command
      */
     public function handle(): void
     {
-        $accountId = (int)$this->argument('account_id');
+        $accountId = $this->argument('account_id');
+        if (!$accountId) {
+            if ($this->isFirstRunCompleted()) {
+                $state = json_decode(Storage::get($this->stateFile), true);
+                if (isset($state['account_id'])) {
+                    $accountId = $state['account_id'];
+                }
+            }
+        }
+
+        if (!$accountId) {
+            $this->error("account_id не передан и не найден в файлах. пожалуйста, запустите команду вручную с переданным account_id.");
+            return;
+        }
 
         // Создаём экземпляр `ApiService` вручную, передавая `account_id`
         $apiService = app()->make(ApiService::class, ['accountId' => $accountId]);
@@ -95,17 +108,19 @@ class FetchApiData extends Command
      *
      * @return bool
      */
+
+
     private function isFirstRunCompleted(): bool
     {
         return Storage::exists($this->stateFile);
     }
-
     /**
-     * Отмечает первый запуск как завершённый.
+     * Отмечает первый запуск как завершённый и добавляет account_id для выполнения вызова метода через планировщик задач.
      */
-    private function markFirstRunCompleted(): void
+    private function markFirstRunCompleted(int $accountId): void
     {
-        Storage::put($this->stateFile, json_encode(['firstRunCompleted' => true]));
+        Storage::put($this->stateFile, json_encode(['firstRunCompleted' => true, 'account_id' => $accountId]));
     }
+
 }
 
