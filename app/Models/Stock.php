@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Interfaces\HasRulesInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Stock extends Model implements HasRulesInterface
 {
@@ -60,7 +61,7 @@ class Stock extends Model implements HasRulesInterface
         return $this->rules;
     }
 
-    public function account()
+    public function account(): BelongsTo
     {
         return $this->belongsTo(Account::class);
     }

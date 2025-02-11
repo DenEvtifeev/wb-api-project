@@ -6,7 +6,6 @@ use App\Interfaces\HasRulesInterface;
 use App\Models\Account;
 use App\Strategies\GetParamKeyAuthStrategy;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Http;
 use App\Models\Stock;
 use App\Models\Order;
 use App\Models\Sale;
@@ -83,7 +82,10 @@ class ApiService
 
     }
 
-    public function fetchStocks(string $dateFrom, string $dateTo, int|array $page = 1, int $limit = 500)
+    /**
+     * @throws Exception
+     */
+    public function fetchStocks(string $dateFrom, string $dateTo, int|array $page = 1, int $limit = 500): void
     {
         $jsonData = $this->fetchEndpointData('stocks', [
             'dateFrom' => $dateFrom,
@@ -96,7 +98,10 @@ class ApiService
 
     }
 
-    public function fetchIncomes(string $dateFrom, string $dateTo, int $page = 1, int $limit = 500)
+    /**
+     * @throws Exception
+     */
+    public function fetchIncomes(string $dateFrom, string $dateTo, int $page = 1, int $limit = 500): void
     {
         $jsonData = $this->fetchEndpointData('incomes', [
             'dateFrom' => $dateFrom,
@@ -112,7 +117,7 @@ class ApiService
     /**
      * @throws Exception
      */
-    public function fetchSales(string $dateFrom, string $dateTo, int $page = 1, int $limit = 500)
+    public function fetchSales(string $dateFrom, string $dateTo, int $page = 1, int $limit = 500): void
     {
         $jsonData = $this->fetchEndpointData('sales', [
             'dateFrom' => $dateFrom,
@@ -126,7 +131,10 @@ class ApiService
     }
 
 
-    public function fetchOrders(string $dateFrom, string $dateTo, int $page = 1, int $limit = 500)
+    /**
+     * @throws Exception
+     */
+    public function fetchOrders(string $dateFrom, string $dateTo, int $page = 1, int $limit = 500): void
     {
         $jsonData = $this->fetchEndpointData('orders', [
             'dateFrom' => $dateFrom,

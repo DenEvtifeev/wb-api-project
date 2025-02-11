@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Company extends Model
 {
@@ -11,7 +12,7 @@ class Company extends Model
 
     protected $fillable = ['name'];
 
-    public function accounts(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function accounts(): HasMany
     {
         return $this->hasMany(Account::class);
     }
