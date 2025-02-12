@@ -96,7 +96,7 @@ class FetchApiData extends Command
 
             // Если это первый запуск, отмечаем его как завершённый
             if ($firstRun) {
-                $this->markFirstRunCompleted();
+                $this->markFirstRunCompleted($accountId);
             }
         } catch (\Exception $e) {
             $this->error('Error during API data fetch: ' . $e->getMessage());
