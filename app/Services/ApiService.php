@@ -44,7 +44,7 @@ class ApiService
         // Формируем строку запроса для отладки
         $fullUrl = $url . '?' . http_build_query($params);
         $authStrategy = match ($this->tokenType) {
-            'name' => new GetParamKeyAuthStrategy(),
+            'key' => new GetParamKeyAuthStrategy(),
             default => null
         };
 
