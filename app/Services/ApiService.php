@@ -10,6 +10,7 @@ use App\Models\Stock;
 use App\Models\Order;
 use App\Models\Sale;
 use App\Models\Income;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Exception;
@@ -87,6 +88,12 @@ class ApiService
      */
     public function fetchStocks(string $dateFrom, string $dateTo, int|array $page = 1, int $limit = 500): void
     {
+        $today = Carbon::today();
+        // Если переданная дата меньше или равна "вчера" по серверному времени, устанавливаем dateFrom равной сегодняшней дате
+        if (Carbon::parse($dateFrom)->lte(Carbon::yesterday())) {
+            $dateFrom = $today->toDateString();
+        }
+
         $jsonData = $this->fetchEndpointData('stocks', [
             'dateFrom' => $dateFrom,
             'dateTo' => $dateTo,
