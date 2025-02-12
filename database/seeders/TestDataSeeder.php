@@ -20,8 +20,8 @@ class TestDataSeeder extends Seeder
         // 2️⃣ Создаём API-сервис
         $apiServiceId = DB::table('api_services')->insertGetId([
             'name' => 'Test API',
-            'base_url' => "http://89.108.115.241:6969/api",
-            'fetch_url' => '/incomes',
+            'base_url' => "http://89.108.115.241:6969/",
+            'fetch_url' => '/api',
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);
