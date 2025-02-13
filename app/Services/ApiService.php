@@ -11,6 +11,7 @@ use App\Models\Order;
 use App\Models\Sale;
 use App\Models\Income;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Exception;
@@ -61,6 +62,7 @@ class ApiService
         dump($fullUrl);
         try {
             $response = $httpRequest->retry(5, 2000, function ($exception, $request) {
+                sleep(5);
                 return $exception->getCode() === 429; // Повторяем только при ошибке 429
             })->get($fullUrl, $params);
             if (!$response->successful()) {
@@ -94,15 +96,7 @@ class ApiService
             $dateFrom = $today->toDateString();
         }
 
-        $jsonData = $this->fetchEndpointData('stocks', [
-            'dateFrom' => $dateFrom,
-            'dateTo' => $dateTo,
-            'page' => $page,
-            'key' => $this->token,
-            'limit' => $limit
-        ]);
-        $this->saveData(Stock::class, $jsonData, $this->accId);
-
+        $this->fetchPaginatedData(Stock::class,'stocks', $dateFrom, $dateTo, $limit);
     }
 
     /**
@@ -110,15 +104,7 @@ class ApiService
      */
     public function fetchIncomes(string $dateFrom, string $dateTo, int $page = 1, int $limit = 500): void
     {
-        $jsonData = $this->fetchEndpointData('incomes', [
-            'dateFrom' => $dateFrom,
-            'dateTo' => $dateTo,
-            'page' => $page,
-            'key' => $this->token,
-            'limit' => $limit
-        ]);
-        $this->saveData(Income::class, $jsonData, $this->accId);
-
+        $this->fetchPaginatedData(Income::class, 'incomes', $dateFrom, $dateTo, $limit);
     }
 
     /**
@@ -126,15 +112,7 @@ class ApiService
      */
     public function fetchSales(string $dateFrom, string $dateTo, int $page = 1, int $limit = 500): void
     {
-        $jsonData = $this->fetchEndpointData('sales', [
-            'dateFrom' => $dateFrom,
-            'dateTo' => $dateTo,
-            'page' => $page,
-            'key' => $this->token,
-            'limit' => $limit
-        ]);
-        $this->saveData(Sale::class, $jsonData, $this->accId);
-
+        $this->fetchPaginatedData(Sale::class,'sales', $dateFrom, $dateTo, $limit);
     }
 
 
@@ -143,33 +121,69 @@ class ApiService
      */
     public function fetchOrders(string $dateFrom, string $dateTo, int $page = 1, int $limit = 500): void
     {
-        $jsonData = $this->fetchEndpointData('orders', [
-            'dateFrom' => $dateFrom,
-            'dateTo' => $dateTo,
-            'page' => $page,
-            'key' => $this->token,
-            'limit' => $limit
-        ]);
-        $this->saveData(Order::class, $jsonData, $this->accId);
+        $this->fetchPaginatedData(Order::class,'orders', $dateFrom, $dateTo, $limit);
     }
 
     private function saveData(string $modelClass, array $data, int $accountId): void
     {
-        foreach ($data['data'] as $item) {
+        foreach ($data as $item) {
+            // Если элемент пустой или не является массивом — пропускаем
+            if (!is_array($item) || empty($item)) {
+                Log::warning('Empty or invalid record encountered', $item);
+                continue;
+            }
+
+            // Добавляем account_id в данные (если его еще нет)
+            $item['account_id'] = $accountId;
+            // Сортируем массив для стабильности хэша
+            ksort($item);
+            // Объединяем все значения через разделитель и вычисляем MD5-хэш
+            $dataForHash = implode('|', $item);
+            $item['record_hash'] = md5($dataForHash);
+
             $newModel = new $modelClass();
 
-            $existingRecord = app($modelClass)::where('account_id', $accountId)
-                ->where('date', $item['date'])
-                ->first();
-            if ($this->validateData($newModel, $item) && !$existingRecord) {
-                $item['account_id'] = $accountId;
-                $newModel->fill($item);
-                $newModel->save();
-            } else {
-                Log::warning('Wrong data or record exists', $item);
+            // Проверяем валидность данных (хэш уже включен)
+            if (!$this->validateData($newModel, $item)) {
+                Log::warning('Wrong data: ', $item);
+                continue;
             }
+
+            $newModel->fill($item);
+            $newModel->save();
         }
-        (new JsonResponse())->setStatusCode(200, 'Good data');
+        Log::info('Data save process completed.');
     }
+
+    /**
+     * @throws Exception
+     */
+    private function fetchPaginatedData(string $modelClass, string $endpoint, string $dateFrom, string $dateTo, int $limit = 500): void
+    {
+        $page = 1;
+        do {
+            DB::beginTransaction();
+            try {
+                $jsonData = $this->fetchEndpointData($endpoint, [
+                    'dateFrom' => $dateFrom,
+                    'dateTo'   => $dateTo,
+                    'page'     => $page,
+                    'key'      => $this->token,
+                    'limit'    => $limit,
+                ]);
+                $records = $jsonData['data'] ?? [];
+                $this->saveData($modelClass, $records, $this->accId);
+                DB::commit();
+            } catch (Exception $e) {
+                DB::rollBack();
+                // Можно логировать ошибку, но продолжать обработку следующих страниц
+                Log::error("Error on page {$page}: " . $e->getMessage());
+            }
+            $page++;
+        } while (count($records) === $limit);
+    }
+
+
+
 
 }

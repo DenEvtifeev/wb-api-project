@@ -41,6 +41,7 @@ return new class extends Migration
             $table->string('category');
             $table->string('brand');
             $table->boolean('is_storno')->nullable();
+            $table->string('record_hash', 32)->unique();
             $table->timestamps();
         });
     }

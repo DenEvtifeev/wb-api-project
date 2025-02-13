@@ -32,6 +32,7 @@ return new class extends Migration
             $table->string('brand');
             $table->boolean('is_cancel');
             $table->timestamp('cancel_dt')->nullable();
+            $table->string('record_hash', 32)->unique();
             $table->timestamps();
         });
     }

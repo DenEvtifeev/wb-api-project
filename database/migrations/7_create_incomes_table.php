@@ -26,6 +26,7 @@ return new class extends Migration
             $table->date('date_close')->nullable();
             $table->string('warehouse_name');
             $table->bigInteger('nm_id');
+            $table->string('record_hash', 32)->unique();
             $table->timestamps();
         });
     }

@@ -40,6 +40,7 @@ class Sale extends Model implements HasRulesInterface
         'category',
         'brand',
         'is_storno',
+        'record_hash'
     ];
 
     private array $rules = [
@@ -70,6 +71,7 @@ class Sale extends Model implements HasRulesInterface
         'category' => 'nullable|string|max:255',
         'brand' => 'nullable|string|max:255',
         'is_storno' => 'nullable|boolean',
+        'record_hash'=> 'required|string|size:32|regex:/^[a-f0-9]{32}$/i'
     ];
 
     public function getRules(): array

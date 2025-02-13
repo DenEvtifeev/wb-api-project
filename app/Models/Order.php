@@ -31,6 +31,7 @@ class Order extends Model implements HasRulesInterface
         'brand',
         'is_cancel',
         'cancel_dt',
+        'record_hash'
     ];
 
     private array $rules = [
@@ -52,6 +53,7 @@ class Order extends Model implements HasRulesInterface
         'brand' => 'nullable|string|max:255',
         'is_cancel' => 'nullable|boolean',
         'cancel_dt' => 'nullable|date',
+        'record_hash'=> 'required|string|size:32|regex:/^[a-f0-9]{32}$/i'
     ];
 
     public function getRules(): array

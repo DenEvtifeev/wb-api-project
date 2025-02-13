@@ -25,6 +25,7 @@ class Income extends Model implements HasRulesInterface
         'date_close',
         'warehouse_name',
         'nm_id',
+        'record_hash'
     ];
 
     private array $rules = [
@@ -40,6 +41,7 @@ class Income extends Model implements HasRulesInterface
         'date_close' => 'nullable|date',
         'warehouse_name' => 'nullable|string|max:255',
         'nm_id' => 'nullable|integer',
+        'record_hash'=> 'required|string|size:32|regex:/^[a-f0-9]{32}$/i'
     ];
 
     public function getRules(): array
